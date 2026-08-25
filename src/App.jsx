@@ -8,21 +8,13 @@ const FLOOD = "#F5C518";
 const RED = "#D64541";
 
 const TEAM_POOL = [
-  // Türkiye - Süper Lig
   "Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor",
-  // İspanya - La Liga
   "Real Madrid", "Barcelona",
-  // İngiltere - Premier League
   "Manchester United", "Manchester City", "Liverpool", "Chelsea", "Arsenal", "Tottenham",
-  // İtalya - Serie A
   "Juventus", "AC Milan", "Inter Milan", "Napoli", "Roma",
-  // Almanya - Bundesliga
   "Bayern Münih", "Borussia Dortmund",
-  // Fransa - Ligue 1
   "Paris Saint-Germain",
-  // Hollanda
   "Ajax",
-  // Portekiz
   "Porto",
 ];
 
@@ -43,28 +35,28 @@ function pickRandomTeam(exclude) {
 }
 
 const PLAYER_DB = {
-  "Real Madrid": ["Cristiano Ronaldo", "David Beckham", "Zinedine Zidane", "Luka Modric", "Karim Benzema", "Toni Kroos", "Gareth Bale", "Ronaldo Nazario", "Xabi Alonso", "Fabio Cannavaro", "Angel Di Maria", "James Rodriguez", "Alvaro Morata", "Luis Figo", "Kaka", "Robinho", "Sami Khedira", "Pepe", "Gonzalo Higuain", "Mesut Ozil"],
-  Barcelona: ["Lionel Messi", "Neymar", "Luis Suarez", "Ronaldinho", "Samuel Eto'o", "Zlatan Ibrahimovic", "Thierry Henry", "Philippe Coutinho", "Antoine Griezmann", "Ronaldo Nazario", "Luis Figo", "Arturo Vidal", "Miralem Pjanic", "Frenkie de Jong", "Deco"],
-  "Manchester United": ["Cristiano Ronaldo", "David Beckham", "Wayne Rooney", "Angel Di Maria", "Alexis Sanchez", "Robin van Persie", "Zlatan Ibrahimovic", "Juan Mata", "Radamel Falcao", "Henrikh Mkhitaryan", "Dimitar Berbatov", "Edinson Cavani", "Christian Eriksen", "Matthijs de Ligt", "Nani"],
-  "Manchester City": ["Robinho", "Sergio Aguero", "Kevin De Bruyne", "David Silva", "Yaya Toure", "Erling Haaland", "Jack Grealish", "Edin Dzeko"],
-  Liverpool: ["Fernando Torres", "Luis Suarez", "Xabi Alonso", "Philippe Coutinho", "Dirk Kuyt"],
-  Chelsea: ["Fernando Torres", "Juan Mata", "David Luiz", "Diego Costa", "Alvaro Morata", "Willian", "Eden Hazard", "Radamel Falcao", "Andriy Shevchenko", "Demba Ba", "Kalidou Koulibaly", "Didier Drogba", "Deco"],
-  Arsenal: ["Thierry Henry", "Robin van Persie", "Alexis Sanchez", "Mesut Ozil", "Cesc Fabregas", "Emmanuel Adebayor", "Henrikh Mkhitaryan", "David Luiz"],
+  "Real Madrid": ["Cristiano Ronaldo", "David Beckham", "Zinedine Zidane", "Luka Modric", "Karim Benzema", "Toni Kroos", "Gareth Bale", "Ronaldo Nazario", "Xabi Alonso", "Fabio Cannavaro", "Angel Di Maria", "James Rodriguez", "Alvaro Morata", "Luis Figo", "Kaka", "Robinho", "Sami Khedira", "Pepe", "Gonzalo Higuain", "Mesut Ozil", "Wesley Sneijder", "Michael Essien", "Arjen Robben", "Eden Hazard"],
+  Barcelona: ["Lionel Messi", "Neymar", "Luis Suarez", "Ronaldinho", "Samuel Eto'o", "Zlatan Ibrahimovic", "Thierry Henry", "Philippe Coutinho", "Antoine Griezmann", "Ronaldo Nazario", "Luis Figo", "Arturo Vidal", "Miralem Pjanic", "Frenkie de Jong", "Deco", "Thiago Alcantara", "Robert Lewandowski", "Ousmane Dembele", "Alexis Sanchez", "Sergio Aguero", "Yaya Toure"],
+  "Manchester United": ["Cristiano Ronaldo", "David Beckham", "Wayne Rooney", "Angel Di Maria", "Alexis Sanchez", "Robin van Persie", "Zlatan Ibrahimovic", "Juan Mata", "Radamel Falcao", "Henrikh Mkhitaryan", "Dimitar Berbatov", "Edinson Cavani", "Christian Eriksen", "Matthijs de Ligt", "Nani", "Paul Pogba", "Carlos Tevez", "Romelu Lukaku", "Jadon Sancho", "Shinji Kagawa"],
+  "Manchester City": ["Robinho", "Sergio Aguero", "Kevin De Bruyne", "David Silva", "Yaya Toure", "Erling Haaland", "Jack Grealish", "Edin Dzeko", "Carlos Tevez", "Mario Balotelli", "Jerome Boateng"],
+  Liverpool: ["Fernando Torres", "Luis Suarez", "Xabi Alonso", "Philippe Coutinho", "Dirk Kuyt", "Mario Balotelli", "Thiago Alcantara"],
+  Chelsea: ["Fernando Torres", "Juan Mata", "David Luiz", "Diego Costa", "Alvaro Morata", "Willian", "Eden Hazard", "Radamel Falcao", "Andriy Shevchenko", "Demba Ba", "Kalidou Koulibaly", "Didier Drogba", "Deco", "Samuel Eto'o", "Gonzalo Higuain", "Thiago Silva", "Michael Essien", "Arjen Robben", "Romelu Lukaku", "Jadon Sancho", "Kevin De Bruyne"],
+  Arsenal: ["Thierry Henry", "Robin van Persie", "Alexis Sanchez", "Mesut Ozil", "Cesc Fabregas", "Emmanuel Adebayor", "Henrikh Mkhitaryan", "David Luiz", "Willian"],
   Tottenham: ["Gareth Bale", "Luka Modric", "Dimitar Berbatov", "Emmanuel Adebayor", "Christian Eriksen"],
-  Juventus: ["Zinedine Zidane", "Cristiano Ronaldo", "Fabio Cannavaro", "David Trezeguet", "Paul Pogba", "Gonzalo Higuain", "Sami Khedira", "Angel Di Maria", "Arturo Vidal", "Miralem Pjanic", "Matthijs de Ligt"],
-  "AC Milan": ["Zlatan Ibrahimovic", "Ronaldinho", "David Beckham", "Kaka", "Andriy Shevchenko", "Ronaldo Nazario", "Robinho"],
-  "Inter Milan": ["Ronaldo Nazario", "Samuel Eto'o", "Wesley Sneijder", "Zlatan Ibrahimovic", "Christian Vieri", "Romelu Lukaku", "Arturo Vidal", "Ricardo Quaresma", "Mauro Icardi", "Edin Dzeko", "Christian Eriksen", "Henrikh Mkhitaryan"],
-  Napoli: ["Marek Hamsik", "Edinson Cavani", "Gonzalo Higuain", "Kalidou Koulibaly"],
-  Roma: ["Edin Dzeko", "Henrikh Mkhitaryan", "Miralem Pjanic"],
-  "Paris Saint-Germain": ["Zlatan Ibrahimovic", "David Beckham", "Neymar", "Lionel Messi", "Angel Di Maria", "Thiago Silva", "Kylian Mbappe", "David Luiz", "Edinson Cavani", "Mauro Icardi"],
-  "Bayern Münih": ["Robert Lewandowski", "Franck Ribery", "Arjen Robben", "Philippe Coutinho", "Jerome Boateng", "Arturo Vidal", "James Rodriguez", "Matthijs de Ligt"],
+  Juventus: ["Zinedine Zidane", "Cristiano Ronaldo", "Fabio Cannavaro", "David Trezeguet", "Paul Pogba", "Gonzalo Higuain", "Sami Khedira", "Angel Di Maria", "Arturo Vidal", "Miralem Pjanic", "Matthijs de Ligt", "Carlos Tevez", "Andrea Pirlo", "Christian Vieri", "Gianluigi Buffon", "Douglas Costa"],
+  "AC Milan": ["Zlatan Ibrahimovic", "Ronaldinho", "David Beckham", "Kaka", "Andriy Shevchenko", "Ronaldo Nazario", "Robinho", "Gonzalo Higuain", "Andrea Pirlo", "Mario Balotelli", "Fernando Torres", "Michael Essien", "Thiago Silva", "Luka Modric", "Alvaro Morata"],
+  "Inter Milan": ["Ronaldo Nazario", "Samuel Eto'o", "Wesley Sneijder", "Zlatan Ibrahimovic", "Christian Vieri", "Romelu Lukaku", "Arturo Vidal", "Ricardo Quaresma", "Mauro Icardi", "Edin Dzeko", "Christian Eriksen", "Henrikh Mkhitaryan", "Fabio Cannavaro", "Mario Balotelli", "Alexis Sanchez"],
+  Napoli: ["Marek Hamsik", "Edinson Cavani", "Gonzalo Higuain", "Kalidou Koulibaly", "Fabio Cannavaro", "Jose Sosa", "Kevin De Bruyne", "Romelu Lukaku"],
+  Roma: ["Edin Dzeko", "Henrikh Mkhitaryan", "Miralem Pjanic", "Romelu Lukaku"],
+  "Paris Saint-Germain": ["Zlatan Ibrahimovic", "David Beckham", "Neymar", "Lionel Messi", "Angel Di Maria", "Thiago Silva", "Kylian Mbappe", "David Luiz", "Edinson Cavani", "Mauro Icardi", "Ronaldinho", "Gianluigi Buffon", "Ousmane Dembele"],
+  "Bayern Münih": ["Robert Lewandowski", "Franck Ribery", "Arjen Robben", "Philippe Coutinho", "Jerome Boateng", "Arturo Vidal", "James Rodriguez", "Matthijs de Ligt", "Thiago Alcantara", "Douglas Costa", "Toni Kroos", "Xabi Alonso", "Mario Gotze", "Jose Sosa"],
   "Borussia Dortmund": ["Robert Lewandowski", "Mario Gotze", "Ousmane Dembele", "Erling Haaland", "Jadon Sancho", "Shinji Kagawa", "Henrikh Mkhitaryan"],
-  Ajax: ["Wesley Sneijder", "Luis Suarez", "Christian Eriksen", "Frenkie de Jong", "Matthijs de Ligt", "Dusan Tadic"],
+  Ajax: ["Wesley Sneijder", "Luis Suarez", "Christian Eriksen", "Frenkie de Jong", "Matthijs de Ligt", "Dusan Tadic", "Zlatan Ibrahimovic"],
   Porto: ["Deco", "Hulk", "Radamel Falcao", "Ricardo Quaresma", "James Rodriguez", "Pepe"],
-  Galatasaray: ["Wesley Sneijder", "Didier Drogba", "Radamel Falcao", "Mauro Icardi"],
+  Galatasaray: ["Wesley Sneijder", "Didier Drogba", "Radamel Falcao", "Mauro Icardi", "Franck Ribery", "Alvaro Morata"],
   Fenerbahçe: ["Robin van Persie", "Dirk Kuyt", "Nani", "Mesut Ozil", "Edin Dzeko", "Dusan Tadic"],
-  Beşiktaş: ["Demba Ba", "Ricardo Quaresma", "Pepe", "Vincent Aboubakar"],
-  Trabzonspor: ["Marek Hamsik", "David Trezeguet"],
+  Beşiktaş: ["Demba Ba", "Ricardo Quaresma", "Pepe", "Vincent Aboubakar", "Miralem Pjanic", "Shinji Kagawa"],
+  Trabzonspor: ["Marek Hamsik", "Jose Sosa"],
 };
 
 function normalizeName(str) {
