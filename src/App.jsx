@@ -8,34 +8,18 @@ const FLOOD = "#F5C518";
 const RED = "#D64541";
 
 const TEAM_POOL = [
-  // Türkiye
+  // Türkiye - Süper Lig
   "Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor",
-  // İspanya
+  // İspanya - La Liga
   "Real Madrid", "Barcelona", "Atletico Madrid", "Sevilla", "Valencia", "Real Sociedad",
-  // Almanya
-  "Bayern Münih", "Borussia Dortmund", "Schalke 04", "Bayer Leverkusen", "RB Leipzig",
-  // İngiltere
+  // İngiltere - Premier League
   "Manchester United", "Manchester City", "Liverpool", "Chelsea", "Arsenal", "Tottenham", "Newcastle United",
-  // İtalya
+  // İtalya - Serie A
   "Juventus", "AC Milan", "Inter Milan", "Napoli", "Roma", "Fiorentina",
-  // Fransa
+  // Almanya - Bundesliga
+  "Bayern Münih", "Borussia Dortmund", "Schalke 04", "Bayer Leverkusen", "RB Leipzig",
+  // Fransa - Ligue 1
   "Paris Saint-Germain", "Marsilya", "Lyon", "Monaco", "Lille",
-  // Hollanda
-  "Ajax", "PSV Eindhoven", "Feyenoord",
-  // Portekiz
-  "Porto", "Benfica", "Sporting Lizbon",
-  // Diğer Avrupa
-  "Celtic", "Rangers", "Anderlecht", "Shakhtar Donetsk", "Dinamo Zagreb", "Red Bull Salzburg",
-  // Güney Amerika
-  "River Plate", "Boca Juniors", "Flamengo", "Palmeiras", "Corinthians", "São Paulo",
-  // Kuzey Amerika
-  "LA Galaxy", "Inter Miami", "Club América",
-  // Orta Doğu
-  "Al Nassr", "Al Hilal", "Al Ahli",
-  // Afrika
-  "Al Ahly", "Zamalek", "Wydad Casablanca",
-  // Asya-Pasifik
-  "Kashima Antlers", "Urawa Red Diamonds", "Shanghai Port", "Sydney FC",
 ];
 
 function pickTwoRandomTeams(excludeA, excludeB) {
@@ -52,6 +36,59 @@ function pickTwoRandomTeams(excludeA, excludeB) {
 function pickRandomTeam(exclude) {
   const pool = TEAM_POOL.filter((t) => t !== exclude);
   return pool[Math.floor(Math.random() * pool.length)];
+}
+
+const PLAYER_DB = {
+  "Real Madrid": ["Cristiano Ronaldo", "David Beckham", "Zinedine Zidane", "Luka Modric", "Karim Benzema", "Toni Kroos", "Gareth Bale", "Ronaldo Nazario", "Xabi Alonso", "Fabio Cannavaro", "Angel Di Maria", "James Rodriguez", "Alvaro Morata", "Luis Figo"],
+  Barcelona: ["Lionel Messi", "Neymar", "Luis Suarez", "Ronaldinho", "Samuel Eto'o", "Zlatan Ibrahimovic", "Thierry Henry", "Philippe Coutinho", "Antoine Griezmann", "Ronaldo Nazario", "Luis Figo"],
+  "Manchester United": ["Cristiano Ronaldo", "David Beckham", "Wayne Rooney", "Angel Di Maria", "Alexis Sanchez", "Robin van Persie", "Zlatan Ibrahimovic", "Juan Mata", "Radamel Falcao"],
+  "Manchester City": ["Robinho", "Sergio Aguero", "Kevin De Bruyne", "David Silva", "Yaya Toure", "Erling Haaland", "Jack Grealish", "Edin Dzeko"],
+  Liverpool: ["Fernando Torres", "Luis Suarez", "Xabi Alonso", "Philippe Coutinho"],
+  Chelsea: ["Fernando Torres", "Juan Mata", "David Luiz", "Diego Costa", "Alvaro Morata", "Willian", "Eden Hazard", "Radamel Falcao"],
+  Arsenal: ["Thierry Henry", "Robin van Persie", "Alexis Sanchez", "Mesut Ozil", "Cesc Fabregas", "Emmanuel Adebayor"],
+  Tottenham: ["Gareth Bale", "Luka Modric", "Dimitar Berbatov", "Emmanuel Adebayor"],
+  Juventus: ["Zinedine Zidane", "Cristiano Ronaldo", "Fabio Cannavaro", "David Trezeguet", "Paul Pogba", "Gonzalo Higuain", "Sami Khedira"],
+  "AC Milan": ["Zlatan Ibrahimovic", "Ronaldinho", "David Beckham", "Kaka", "Andriy Shevchenko", "Ronaldo Nazario", "Robinho"],
+  "Inter Milan": ["Ronaldo Nazario", "Samuel Eto'o", "Wesley Sneijder", "Zlatan Ibrahimovic", "Christian Vieri", "Romelu Lukaku"],
+  Napoli: ["Marek Hamsik", "Edinson Cavani", "Gonzalo Higuain", "Kalidou Koulibaly"],
+  Roma: ["Edin Dzeko", "Henrikh Mkhitaryan"],
+  "Paris Saint-Germain": ["Zlatan Ibrahimovic", "David Beckham", "Neymar", "Lionel Messi", "Angel Di Maria", "Thiago Silva", "Kylian Mbappe"],
+  "Bayern Münih": ["Robert Lewandowski", "Franck Ribery", "Arjen Robben", "Philippe Coutinho", "Jerome Boateng"],
+  "Borussia Dortmund": ["Robert Lewandowski", "Mario Gotze", "Ousmane Dembele", "Erling Haaland", "Jadon Sancho", "Shinji Kagawa"],
+  Ajax: ["Wesley Sneijder", "Luis Suarez", "Christian Eriksen", "Frenkie de Jong", "Matthijs de Ligt"],
+  Porto: ["Deco", "Hulk", "Radamel Falcao", "Ricardo Quaresma"],
+  Galatasaray: ["Wesley Sneijder", "Didier Drogba", "Radamel Falcao", "Mauro Icardi", "Dusan Tadic"],
+  Fenerbahçe: ["Robin van Persie", "Dirk Kuyt", "Nani", "Mesut Ozil", "Edin Dzeko"],
+  Beşiktaş: ["Demba Ba", "Ricardo Quaresma", "Pepe", "Vincent Aboubakar"],
+  Trabzonspor: ["Marek Hamsik", "David Trezeguet"],
+};
+
+function normalizeName(str) {
+  return (str || "")
+    .toLocaleLowerCase("tr")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim();
+}
+
+function getCommonPlayers(teamA, teamB) {
+  const listA = PLAYER_DB[teamA];
+  const listB = PLAYER_DB[teamB];
+  if (!listA || !listB) return null;
+  const normB = listB.map(normalizeName);
+  return listA.filter((p) => normB.includes(normalizeName(p)));
+}
+
+function answerMatches(answer, commonPlayers) {
+  const norm = normalizeName(answer);
+  if (!norm) return false;
+  return commonPlayers.some((p) => {
+    const np = normalizeName(p);
+    if (np === norm) return true;
+    const parts = np.split(" ");
+    return parts.length > 1 && parts[parts.length - 1] === norm;
+  });
 }
 
 function FlipDigit({ value }) {
@@ -96,6 +133,8 @@ export default function OrtakFutbolcuOyunu() {
   const [timeLeft, setTimeLeft] = useState(45);
   const [answer, setAnswer] = useState("");
   const [lockedAnswer, setLockedAnswer] = useState("");
+  const [autoResult, setAutoResult] = useState(null);
+  const [commonPlayers, setCommonPlayers] = useState(null);
   const [history, setHistory] = useState([]);
   const intervalRef = useRef(null);
 
@@ -108,6 +147,8 @@ export default function OrtakFutbolcuOyunu() {
           if (t <= 1) {
             clearInterval(intervalRef.current);
             setLockedAnswer("");
+            setCommonPlayers(getCommonPlayers(myTeam, gameTeam));
+            setAutoResult("timeout");
             setPhase("reveal");
             return 0;
           }
@@ -146,27 +187,38 @@ export default function OrtakFutbolcuOyunu() {
   function submitAnswer() {
     if (!answer.trim()) return;
     clearInterval(intervalRef.current);
-    setLockedAnswer(answer.trim());
+    const trimmed = answer.trim();
+    setLockedAnswer(trimmed);
+    const common = getCommonPlayers(myTeam, gameTeam);
+    setCommonPlayers(common);
+    if (common === null) {
+      setAutoResult("unknown");
+    } else if (answerMatches(trimmed, common)) {
+      setAutoResult("correct");
+      setScorePlayer((s) => s + 1);
+    } else {
+      setAutoResult("wrong");
+      setScoreGame((s) => s + 1);
+    }
     setPhase("reveal");
   }
 
   function timeOut() {
     clearInterval(intervalRef.current);
     setLockedAnswer("");
+    setCommonPlayers(getCommonPlayers(myTeam, gameTeam));
+    setAutoResult("timeout");
     setPhase("reveal");
   }
 
-  function judge(result) {
-    if (result === "correct") setScorePlayer((s) => s + 1);
-    if (result === "wrong" || result === "void") setScoreGame((s) => s + 1);
-
+  function pushHistoryAndAdvance(resultLabel) {
     setHistory((h) => [
       {
         round,
         myTeam,
         gameTeam,
         answer: lockedAnswer || "—",
-        result: result === "correct" ? "doğru" : result === "wrong" ? "yanlış" : "süre doldu",
+        result: resultLabel,
       },
       ...h,
     ]);
@@ -175,8 +227,21 @@ export default function OrtakFutbolcuOyunu() {
     setGameTeam(t2);
     setAnswer("");
     setLockedAnswer("");
+    setCommonPlayers(null);
+    setAutoResult(null);
     setRound((r) => r + 1);
     setPhase("teams");
+  }
+
+  function nextRound() {
+    const label = autoResult === "correct" ? "doğru" : autoResult === "wrong" ? "yanlış" : autoResult === "timeout" ? "süre doldu" : "bilinmiyor";
+    pushHistoryAndAdvance(label);
+  }
+
+  function judgeManual(result) {
+    if (result === "correct") setScorePlayer((s) => s + 1);
+    if (result === "wrong" || result === "void") setScoreGame((s) => s + 1);
+    pushHistoryAndAdvance(result === "correct" ? "doğru" : result === "wrong" ? "yanlış" : "süre doldu");
   }
 
   function resetGame() {
@@ -189,6 +254,8 @@ export default function OrtakFutbolcuOyunu() {
     setGameTeam("");
     setAnswer("");
     setLockedAnswer("");
+    setCommonPlayers(null);
+    setAutoResult(null);
     setHistory([]);
   }
 
@@ -407,43 +474,94 @@ export default function OrtakFutbolcuOyunu() {
             <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(244,241,232,0.5)" }}>
               {myTeam} × {gameTeam}
             </p>
+
             {lockedAnswer ? (
               <>
                 <p className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: FLOOD }}>
                   Cevabın:
                 </p>
-                <p className="font-black text-2xl" style={{ color: CHALK }}>{lockedAnswer}</p>
+                <p className="font-black text-2xl mb-3" style={{ color: CHALK }}>{lockedAnswer}</p>
               </>
             ) : (
-              <p className="font-black text-xl" style={{ color: RED }}>Süre doldu, cevap yok</p>
+              <p className="font-black text-xl mb-3" style={{ color: RED }}>Süre doldu, cevap yok</p>
+            )}
+
+            {autoResult === "correct" && (
+              <p className="flex items-center justify-center gap-1.5 font-black uppercase text-sm" style={{ color: "#3F8F5F" }}>
+                <Check size={16} /> Doğru!
+              </p>
+            )}
+            {autoResult === "wrong" && (
+              <div>
+                <p className="flex items-center justify-center gap-1.5 font-black uppercase text-sm mb-2" style={{ color: RED }}>
+                  <X size={16} /> Yanlış
+                </p>
+                {commonPlayers && commonPlayers.length > 0 ? (
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: "rgba(244,241,232,0.5)" }}>
+                      Orada oynamış oyuncular:
+                    </p>
+                    <p className="text-sm font-bold" style={{ color: CHALK }}>{commonPlayers.join(", ")}</p>
+                  </div>
+                ) : (
+                  <p className="text-xs" style={{ color: "rgba(244,241,232,0.5)" }}>
+                    Bu ikili için listede kayıt yok, cevabın yine de doğru olabilir.
+                  </p>
+                )}
+              </div>
+            )}
+            {autoResult === "timeout" && commonPlayers && commonPlayers.length > 0 && (
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: "rgba(244,241,232,0.5)" }}>
+                  Orada oynamış oyuncular:
+                </p>
+                <p className="text-sm font-bold" style={{ color: CHALK }}>{commonPlayers.join(", ")}</p>
+              </div>
+            )}
+            {autoResult === "unknown" && (
+              <p className="text-xs" style={{ color: "rgba(244,241,232,0.5)" }}>
+                Bu ikili için veri tabanımızda kayıt yok — elle değerlendir.
+              </p>
             )}
           </div>
 
-          {lockedAnswer ? (
-            <div className="grid grid-cols-2 gap-3 w-full">
-              <button
-                onClick={() => judge("correct")}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90"
-                style={{ backgroundColor: "#3F8F5F", color: CHALK }}
-              >
-                <Check size={18} /> Doğru
-              </button>
-              <button
-                onClick={() => judge("wrong")}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90"
-                style={{ backgroundColor: RED, color: CHALK }}
-              >
-                <X size={18} /> Yanlış
-              </button>
-            </div>
-          ) : (
+          {(autoResult === "correct" || autoResult === "wrong") && (
             <button
-              onClick={() => judge("void")}
+              onClick={nextRound}
               className="w-full py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90"
               style={{ backgroundColor: FLOOD, color: PITCH }}
             >
               Sonraki Tur
             </button>
+          )}
+
+          {(autoResult === "unknown" || autoResult === "timeout") && (
+            lockedAnswer ? (
+              <div className="grid grid-cols-2 gap-3 w-full">
+                <button
+                  onClick={() => judgeManual("correct")}
+                  className="flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90"
+                  style={{ backgroundColor: "#3F8F5F", color: CHALK }}
+                >
+                  <Check size={18} /> Doğru
+                </button>
+                <button
+                  onClick={() => judgeManual("wrong")}
+                  className="flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90"
+                  style={{ backgroundColor: RED, color: CHALK }}
+                >
+                  <X size={18} /> Yanlış
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => judgeManual("void")}
+                className="w-full py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90"
+                style={{ backgroundColor: FLOOD, color: PITCH }}
+              >
+                Sonraki Tur
+              </button>
+            )
           )}
         </div>
       )}
