@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, Check, X, RotateCcw, Trophy, ChevronRight, Ban, Bot, Shuffle, Lightbulb, Flame, Award } from "lucide-react";
+import { Play, Check, X, RotateCcw, Trophy, ChevronRight, Ban, Bot, Shuffle, Lightbulb, Flame, Award, Loader2, WifiOff } from "lucide-react";
 
 const PITCH = "#0B2E23";
 const PITCH_LIGHT = "#123B2C";
@@ -8,44 +8,29 @@ const FLOOD = "#F5C518";
 const RED = "#D64541";
 const GREEN = "#3F8F5F";
 
-const STATS_KEY = "cagriHocamBulBeni_stats_v1";
+const STATS_KEY = "cagriHocamBulBeni_stats_v2";
 const DEFAULT_STATS = { bestScore: 0, bestStreak: 0, totalCorrect: 0, totalRounds: 0 };
 
 const TEAM_POOL = [
-  "Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor",
-  "Real Madrid", "Barcelona",
+  "Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor", "Başakşehir", "Kasımpaşa",
+  "Sivasspor", "Konyaspor", "Kayserispor", "Antalyaspor", "Alanyaspor", "Gaziantep FK",
+  "Çaykur Rizespor", "Samsunspor",
+  "Real Madrid", "Barcelona", "Atletico Madrid", "Sevilla", "Valencia", "Real Sociedad",
+  "Athletic Bilbao", "Real Betis", "Villarreal", "Celta Vigo", "Osasuna", "Getafe",
+  "Girona", "Mallorca", "Rayo Vallecano", "Deportivo Alaves", "Espanyol", "Las Palmas",
   "Manchester United", "Manchester City", "Liverpool", "Chelsea", "Arsenal", "Tottenham",
-  "Juventus", "AC Milan", "Inter Milan", "Napoli", "Roma",
-  "Bayern Münih", "Borussia Dortmund",
-  "Paris Saint-Germain",
-  "Ajax",
-  "Porto",
+  "Newcastle United", "Aston Villa", "Brighton", "West Ham United", "Crystal Palace",
+  "Everton", "Fulham", "Brentford", "Wolverhampton Wanderers", "Nottingham Forest",
+  "Bournemouth", "Leeds United",
+  "Juventus", "AC Milan", "Inter Milan", "Napoli", "Roma", "Lazio", "Atalanta",
+  "Fiorentina", "Bologna", "Torino", "Udinese", "Genoa", "Cagliari", "Parma",
+  "Hellas Verona",
+  "Bayern Münih", "Borussia Dortmund", "RB Leipzig", "Bayer Leverkusen", "Union Berlin",
+  "Eintracht Frankfurt", "VfB Stuttgart", "Borussia Monchengladbach", "Wolfsburg",
+  "Freiburg", "Hoffenheim", "Werder Bremen", "Mainz 05", "Augsburg",
+  "Paris Saint-Germain", "Marsilya", "Monaco", "Lyon", "Lille", "Nice", "Rennes",
+  "Lens", "Strasbourg", "Toulouse", "Nantes", "Montpellier", "Brest",
 ];
-
-const PLAYER_DB = {
-  "Real Madrid": ["Cristiano Ronaldo", "David Beckham", "Zinedine Zidane", "Luka Modric", "Karim Benzema", "Toni Kroos", "Gareth Bale", "Ronaldo Nazario", "Xabi Alonso", "Fabio Cannavaro", "Angel Di Maria", "James Rodriguez", "Alvaro Morata", "Luis Figo", "Kaka", "Robinho", "Sami Khedira", "Pepe", "Gonzalo Higuain", "Mesut Ozil", "Wesley Sneijder", "Michael Essien", "Arjen Robben", "Eden Hazard", "Roberto Carlos", "Antonio Rudiger", "Jude Bellingham", "Achraf Hakimi", "Emmanuel Adebayor"],
-  Barcelona: ["Lionel Messi", "Neymar", "Luis Suarez", "Ronaldinho", "Samuel Eto'o", "Zlatan Ibrahimovic", "Thierry Henry", "Philippe Coutinho", "Antoine Griezmann", "Ronaldo Nazario", "Luis Figo", "Arturo Vidal", "Miralem Pjanic", "Frenkie de Jong", "Deco", "Thiago Alcantara", "Robert Lewandowski", "Ousmane Dembele", "Alexis Sanchez", "Sergio Aguero", "Yaya Toure", "Arda Turan", "Gheorghe Popescu", "Rustu Recber", "Diego Maradona"],
-  "Manchester United": ["Cristiano Ronaldo", "David Beckham", "Wayne Rooney", "Angel Di Maria", "Alexis Sanchez", "Robin van Persie", "Zlatan Ibrahimovic", "Juan Mata", "Radamel Falcao", "Henrikh Mkhitaryan", "Dimitar Berbatov", "Edinson Cavani", "Christian Eriksen", "Matthijs de Ligt", "Nani", "Paul Pogba", "Carlos Tevez", "Romelu Lukaku", "Jadon Sancho", "Shinji Kagawa", "Andre Onana"],
-  "Manchester City": ["Robinho", "Sergio Aguero", "Kevin De Bruyne", "David Silva", "Yaya Toure", "Erling Haaland", "Jack Grealish", "Edin Dzeko", "Carlos Tevez", "Mario Balotelli", "Jerome Boateng", "Emmanuel Adebayor"],
-  Liverpool: ["Fernando Torres", "Luis Suarez", "Xabi Alonso", "Philippe Coutinho", "Dirk Kuyt", "Mario Balotelli", "Thiago Alcantara", "Mohamed Salah", "Daniel Sturridge", "Robbie Keane"],
-  Chelsea: ["Fernando Torres", "Juan Mata", "David Luiz", "Diego Costa", "Alvaro Morata", "Willian", "Eden Hazard", "Radamel Falcao", "Andriy Shevchenko", "Demba Ba", "Kalidou Koulibaly", "Didier Drogba", "Deco", "Samuel Eto'o", "Gonzalo Higuain", "Thiago Silva", "Michael Essien", "Arjen Robben", "Romelu Lukaku", "Jadon Sancho", "Kevin De Bruyne", "Mohamed Salah", "Daniel Sturridge", "William Gallas"],
-  Arsenal: ["Thierry Henry", "Robin van Persie", "Alexis Sanchez", "Mesut Ozil", "Cesc Fabregas", "Emmanuel Adebayor", "Henrikh Mkhitaryan", "David Luiz", "Willian", "Nicolas Pepe", "William Gallas"],
-  Tottenham: ["Gareth Bale", "Luka Modric", "Dimitar Berbatov", "Emmanuel Adebayor", "Christian Eriksen", "Gheorghe Popescu", "Robbie Keane", "William Gallas"],
-  Juventus: ["Zinedine Zidane", "Cristiano Ronaldo", "Fabio Cannavaro", "David Trezeguet", "Paul Pogba", "Gonzalo Higuain", "Sami Khedira", "Angel Di Maria", "Arturo Vidal", "Miralem Pjanic", "Matthijs de Ligt", "Carlos Tevez", "Andrea Pirlo", "Christian Vieri", "Gianluigi Buffon", "Douglas Costa"],
-  "AC Milan": ["Zlatan Ibrahimovic", "Ronaldinho", "David Beckham", "Kaka", "Andriy Shevchenko", "Ronaldo Nazario", "Robinho", "Gonzalo Higuain", "Andrea Pirlo", "Mario Balotelli", "Fernando Torres", "Michael Essien", "Thiago Silva", "Luka Modric", "Alvaro Morata"],
-  "Inter Milan": ["Ronaldo Nazario", "Samuel Eto'o", "Wesley Sneijder", "Zlatan Ibrahimovic", "Christian Vieri", "Romelu Lukaku", "Arturo Vidal", "Ricardo Quaresma", "Mauro Icardi", "Edin Dzeko", "Christian Eriksen", "Henrikh Mkhitaryan", "Fabio Cannavaro", "Mario Balotelli", "Alexis Sanchez", "Andre Onana", "Robbie Keane"],
-  Napoli: ["Marek Hamsik", "Edinson Cavani", "Gonzalo Higuain", "Kalidou Koulibaly", "Fabio Cannavaro", "Jose Sosa", "Kevin De Bruyne", "Romelu Lukaku", "Diego Maradona"],
-  Roma: ["Edin Dzeko", "Henrikh Mkhitaryan", "Miralem Pjanic", "Romelu Lukaku", "Antonio Rudiger", "Mohamed Salah"],
-  "Paris Saint-Germain": ["Zlatan Ibrahimovic", "David Beckham", "Neymar", "Lionel Messi", "Angel Di Maria", "Thiago Silva", "Kylian Mbappe", "David Luiz", "Edinson Cavani", "Mauro Icardi", "Ronaldinho", "Gianluigi Buffon", "Ousmane Dembele", "Achraf Hakimi"],
-  "Bayern Münih": ["Robert Lewandowski", "Franck Ribery", "Arjen Robben", "Philippe Coutinho", "Jerome Boateng", "Arturo Vidal", "James Rodriguez", "Matthijs de Ligt", "Thiago Alcantara", "Douglas Costa", "Toni Kroos", "Xabi Alonso", "Mario Gotze", "Jose Sosa"],
-  "Borussia Dortmund": ["Robert Lewandowski", "Mario Gotze", "Ousmane Dembele", "Erling Haaland", "Jadon Sancho", "Shinji Kagawa", "Henrikh Mkhitaryan", "Jude Bellingham", "Achraf Hakimi"],
-  Ajax: ["Wesley Sneijder", "Luis Suarez", "Christian Eriksen", "Frenkie de Jong", "Matthijs de Ligt", "Dusan Tadic", "Zlatan Ibrahimovic", "Andre Onana"],
-  Porto: ["Deco", "Hulk", "Radamel Falcao", "Ricardo Quaresma", "James Rodriguez", "Pepe"],
-  Galatasaray: ["Wesley Sneijder", "Didier Drogba", "Radamel Falcao", "Mauro Icardi", "Franck Ribery", "Alvaro Morata", "Arda Turan", "Gheorghe Popescu"],
-  Fenerbahçe: ["Robin van Persie", "Dirk Kuyt", "Nani", "Mesut Ozil", "Edin Dzeko", "Dusan Tadic", "Rustu Recber", "Roberto Carlos"],
-  Beşiktaş: ["Demba Ba", "Ricardo Quaresma", "Pepe", "Vincent Aboubakar", "Miralem Pjanic", "Shinji Kagawa"],
-  Trabzonspor: ["Marek Hamsik", "Jose Sosa", "Mohamed Salah", "Nicolas Pepe", "Daniel Sturridge", "Andre Onana"],
-};
 
 function normalizeName(str) {
   return (str || "")
@@ -54,48 +39,6 @@ function normalizeName(str) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9\s]/g, "")
     .trim();
-}
-
-function getCommonPlayers(teamA, teamB) {
-  const listA = PLAYER_DB[teamA];
-  const listB = PLAYER_DB[teamB];
-  if (!listA || !listB) return null;
-  const normB = listB.map(normalizeName);
-  return listA.filter((p) => normB.includes(normalizeName(p)));
-}
-
-const VALID_PAIRS = (() => {
-  const pairs = [];
-  for (let i = 0; i < TEAM_POOL.length; i++) {
-    for (let j = i + 1; j < TEAM_POOL.length; j++) {
-      const common = getCommonPlayers(TEAM_POOL[i], TEAM_POOL[j]);
-      if (common && common.length > 0) pairs.push([TEAM_POOL[i], TEAM_POOL[j]]);
-    }
-  }
-  return pairs;
-})();
-
-function pickRandomValidPair(excludePair) {
-  let candidates = VALID_PAIRS;
-  if (excludePair) {
-    candidates = VALID_PAIRS.filter(
-      ([a, b]) => !((a === excludePair[0] && b === excludePair[1]) || (a === excludePair[1] && b === excludePair[0]))
-    );
-    if (candidates.length === 0) candidates = VALID_PAIRS;
-  }
-  const [a, b] = candidates[Math.floor(Math.random() * candidates.length)];
-  return Math.random() < 0.5 ? [a, b] : [b, a];
-}
-
-function pickPartnerFor(fixedTeam, excludeTeam) {
-  let candidates = VALID_PAIRS
-    .filter(([a, b]) => a === fixedTeam || b === fixedTeam)
-    .map(([a, b]) => (a === fixedTeam ? b : a))
-    .filter((t) => t !== excludeTeam);
-  if (candidates.length === 0) {
-    candidates = VALID_PAIRS.filter(([a, b]) => a === fixedTeam || b === fixedTeam).map((p) => (p[0] === fixedTeam ? p[1] : p[0]));
-  }
-  return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
 function answerMatches(answer, commonPlayers) {
@@ -180,8 +123,7 @@ function loadStats() {
   try {
     const raw = localStorage.getItem(STATS_KEY);
     if (!raw) return DEFAULT_STATS;
-    const parsed = JSON.parse(raw);
-    return { ...DEFAULT_STATS, ...parsed };
+    return { ...DEFAULT_STATS, ...JSON.parse(raw) };
   } catch {
     return DEFAULT_STATS;
   }
@@ -193,6 +135,118 @@ function saveStats(stats) {
   } catch {
     // localStorage kullanılamıyorsa sessizce geç
   }
+}
+
+const qidCache = new Map();
+const pairCache = new Map();
+
+function fetchWithTimeout(url, options = {}, timeoutMs = 9000) {
+  return Promise.race([
+    fetch(url, options).then((r) => {
+      if (!r.ok) throw new Error("http-" + r.status);
+      return r.json();
+    }),
+    new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs)),
+  ]);
+}
+
+async function searchWikidataEntity(query) {
+  const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(
+    query
+  )}&language=en&format=json&type=item&limit=6&origin=*`;
+  const data = await fetchWithTimeout(url);
+  return data.search || [];
+}
+
+async function resolveTeamQid(teamName) {
+  if (qidCache.has(teamName)) return qidCache.get(teamName);
+  const lsKey = `wdqid:${teamName}`;
+  try {
+    const cached = localStorage.getItem(lsKey);
+    if (cached) {
+      qidCache.set(teamName, cached);
+      return cached;
+    }
+  } catch {
+    // yok say
+  }
+  let results = [];
+  try {
+    results = await searchWikidataEntity(`${teamName} football club`);
+    if (results.length === 0) results = await searchWikidataEntity(teamName);
+  } catch {
+    return null;
+  }
+  const pick =
+    results.find((r) => /football club|association football/i.test(r.description || "")) || results[0];
+  const qid = pick ? pick.id : null;
+  if (qid) {
+    qidCache.set(teamName, qid);
+    try {
+      localStorage.setItem(lsKey, qid);
+    } catch {
+      // yok say
+    }
+  }
+  return qid;
+}
+
+async function fetchCommonPlayersByQid(qidA, qidB) {
+  const query = `SELECT DISTINCT ?pLabel WHERE {
+    ?p wdt:P54 wd:${qidA} .
+    ?p wdt:P54 wd:${qidB} .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+  } LIMIT 40`;
+  const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}&format=json`;
+  const data = await fetchWithTimeout(url, { headers: { Accept: "application/sparql-results+json" } });
+  const names = (data.results?.bindings || []).map((b) => b.pLabel?.value).filter(Boolean);
+  return Array.from(new Set(names));
+}
+
+async function getCommonPlayersLive(teamA, teamB) {
+  const key = [teamA, teamB].sort().join("|");
+  if (pairCache.has(key)) return pairCache.get(key);
+  const [qidA, qidB] = await Promise.all([resolveTeamQid(teamA), resolveTeamQid(teamB)]);
+  if (!qidA || !qidB) return null;
+  try {
+    const players = await fetchCommonPlayersByQid(qidA, qidB);
+    pairCache.set(key, players);
+    return players;
+  } catch {
+    return null;
+  }
+}
+
+function randomTwoDistinct(exclude) {
+  let a, b;
+  do {
+    a = TEAM_POOL[Math.floor(Math.random() * TEAM_POOL.length)];
+    b = TEAM_POOL[Math.floor(Math.random() * TEAM_POOL.length)];
+  } while (a === b || (exclude && exclude[0] === a && exclude[1] === b) || (exclude && exclude[0] === b && exclude[1] === a));
+  return [a, b];
+}
+
+async function findValidRoundPair(exclude) {
+  const MAX_TRIES = 8;
+  for (let i = 0; i < MAX_TRIES; i++) {
+    const [t1, t2] = randomTwoDistinct(exclude);
+    const players = await getCommonPlayersLive(t1, t2);
+    if (players === null) continue;
+    if (players.length > 0) return { t1, t2, players };
+  }
+  return null;
+}
+
+async function findPartnerWithCommonPlayers(fixedTeam, excludeTeam) {
+  const MAX_TRIES = 10;
+  const pool = TEAM_POOL.filter((t) => t !== fixedTeam && t !== excludeTeam);
+  for (let i = 0; i < MAX_TRIES; i++) {
+    const candidate = pool[Math.floor(Math.random() * pool.length)];
+    const players = await getCommonPlayersLive(fixedTeam, candidate);
+    if (players === null) continue;
+    if (players.length > 0) return { team: candidate, players };
+  }
+  return null;
 }
 
 export default function OrtakFutbolcuOyunu() {
@@ -215,6 +269,7 @@ export default function OrtakFutbolcuOyunu() {
   const [hintText, setHintText] = useState("");
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState(() => loadStats());
+  const [shuffling, setShuffling] = useState(null);
   const intervalRef = useRef(null);
 
   const name = playerName.trim() || "Sen";
@@ -249,24 +304,42 @@ export default function OrtakFutbolcuOyunu() {
     });
   }
 
-  function startGame() {
+  async function startGame() {
     setScorePlayer(0);
     setScoreGame(0);
     setRound(1);
     setStreak(0);
     setHistory([]);
-    const [t1, t2] = pickRandomValidPair();
-    setMyTeam(t1);
-    setGameTeam(t2);
+    setPhase("loading");
+    const result = await findValidRoundPair();
+    if (!result) {
+      setPhase("error");
+      return;
+    }
+    setMyTeam(result.t1);
+    setGameTeam(result.t2);
+    setCommonPlayers(result.players);
     setPhase("teams");
   }
 
-  function reshuffleTeam1() {
-    setMyTeam(pickPartnerFor(gameTeam, myTeam));
+  async function reshuffleTeam1() {
+    setShuffling("team1");
+    const result = await findPartnerWithCommonPlayers(gameTeam, myTeam);
+    if (result) {
+      setMyTeam(result.team);
+      setCommonPlayers(result.players);
+    }
+    setShuffling(null);
   }
 
-  function reshuffleTeam2() {
-    setGameTeam(pickPartnerFor(myTeam, gameTeam));
+  async function reshuffleTeam2() {
+    setShuffling("team2");
+    const result = await findPartnerWithCommonPlayers(myTeam, gameTeam);
+    if (result) {
+      setGameTeam(result.team);
+      setCommonPlayers(result.players);
+    }
+    setShuffling(null);
   }
 
   function startRound() {
@@ -274,7 +347,6 @@ export default function OrtakFutbolcuOyunu() {
     setAnswer("");
     setHintUsed(false);
     setHintText("");
-    setCommonPlayers(getCommonPlayers(myTeam, gameTeam) || []);
     setPhase("timer");
   }
 
@@ -328,7 +400,7 @@ export default function OrtakFutbolcuOyunu() {
     handleTimeout();
   }
 
-  function nextRound() {
+  async function nextRound() {
     setHistory((h) => [
       {
         round,
@@ -340,16 +412,21 @@ export default function OrtakFutbolcuOyunu() {
       },
       ...h,
     ]);
-    const [t1, t2] = pickRandomValidPair([myTeam, gameTeam]);
-    setMyTeam(t1);
-    setGameTeam(t2);
     setAnswer("");
     setLockedAnswer("");
-    setCommonPlayers([]);
     setAutoResult(null);
     setHintUsed(false);
     setHintText("");
     setRound((r) => r + 1);
+    setPhase("loading");
+    const result = await findValidRoundPair([myTeam, gameTeam]);
+    if (!result) {
+      setPhase("error");
+      return;
+    }
+    setMyTeam(result.t1);
+    setGameTeam(result.t2);
+    setCommonPlayers(result.players);
     setPhase("teams");
   }
 
@@ -389,8 +466,10 @@ export default function OrtakFutbolcuOyunu() {
           0% { transform: scale(0.8); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .flip-anim { animation: flipIn 0.35s ease-out; transform-style: preserve-3d; }
         .pop-anim { animation: popIn 0.25s ease-out; }
+        .spin-anim { animation: spin 1s linear infinite; }
         .field-input {
           background: rgba(244,241,232,0.06);
           border: 1px solid rgba(245,197,24,0.3);
@@ -400,7 +479,6 @@ export default function OrtakFutbolcuOyunu() {
         .field-input:focus { outline: none; border-color: #F5C518; box-shadow: 0 0 0 3px rgba(245,197,24,0.15); }
       `}</style>
 
-      {/* Header */}
       <div className="w-full max-w-2xl flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: FLOOD }}>
@@ -421,12 +499,12 @@ export default function OrtakFutbolcuOyunu() {
         )}
       </div>
 
-      {/* SETUP */}
       {phase === "setup" && (
         <div className="w-full max-w-md">
           <p className="text-sm mb-4 leading-relaxed" style={{ color: "rgba(244,241,232,0.7)" }}>
-            Bot her turda iki takım seçer. Süre dolmadan bu iki takımda birlikte
-            oynamış bir futbolcu bulup yazman gerekiyor. Hızlı cevap +2, ipucu kullanırsan +1 puan getirir.
+            Bot her turda 6 büyük ligden (Süper Lig, La Liga, Premier League, Serie A,
+            Bundesliga, Ligue 1) iki takım seçer. Veriler gerçek zamanlı Wikidata'dan
+            çekilir — internet bağlantısı gerekir.
           </p>
 
           {stats.totalRounds > 0 && (
@@ -486,8 +564,32 @@ export default function OrtakFutbolcuOyunu() {
         </div>
       )}
 
-      {/* SCOREBOARD */}
-      {phase !== "setup" && (
+      {phase === "loading" && (
+        <div className="w-full max-w-md flex flex-col items-center py-16">
+          <Loader2 size={32} className="spin-anim mb-4" style={{ color: FLOOD }} />
+          <p className="text-sm font-bold" style={{ color: "rgba(244,241,232,0.7)" }}>
+            Ortak oyuncular aranıyor...
+          </p>
+        </div>
+      )}
+
+      {phase === "error" && (
+        <div className="w-full max-w-md flex flex-col items-center py-12">
+          <WifiOff size={32} className="mb-4" style={{ color: RED }} />
+          <p className="text-sm font-bold text-center mb-5" style={{ color: "rgba(244,241,232,0.7)" }}>
+            Veriye ulaşılamadı. İnternet bağlantını kontrol edip tekrar dene.
+          </p>
+          <button
+            onClick={startGame}
+            className="px-6 py-3 rounded-xl font-black uppercase tracking-wide"
+            style={{ backgroundColor: FLOOD, color: PITCH }}
+          >
+            Tekrar Dene
+          </button>
+        </div>
+      )}
+
+      {(phase === "teams" || phase === "timer" || phase === "reveal") && (
         <div className="w-full max-w-2xl">
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div className="rounded-xl p-4 text-center" style={{ backgroundColor: PITCH_LIGHT, border: "1px solid rgba(245,197,24,0.15)" }}>
@@ -514,7 +616,6 @@ export default function OrtakFutbolcuOyunu() {
         </div>
       )}
 
-      {/* TEAMS */}
       {phase === "teams" && (
         <div className="w-full max-w-md">
           <p className="text-center text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "rgba(244,241,232,0.5)" }}>
@@ -527,10 +628,11 @@ export default function OrtakFutbolcuOyunu() {
               </label>
               <button
                 onClick={reshuffleTeam1}
-                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition hover:opacity-70"
+                disabled={!!shuffling}
+                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition hover:opacity-70 disabled:opacity-40"
                 style={{ color: "rgba(244,241,232,0.5)" }}
               >
-                <Shuffle size={12} /> Değiştir
+                {shuffling === "team1" ? <Loader2 size={12} className="spin-anim" /> : <Shuffle size={12} />} Değiştir
               </button>
             </div>
             <div
@@ -551,10 +653,11 @@ export default function OrtakFutbolcuOyunu() {
               </label>
               <button
                 onClick={reshuffleTeam2}
-                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition hover:opacity-70"
+                disabled={!!shuffling}
+                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition hover:opacity-70 disabled:opacity-40"
                 style={{ color: "rgba(244,241,232,0.5)" }}
               >
-                <Shuffle size={12} /> Değiştir
+                {shuffling === "team2" ? <Loader2 size={12} className="spin-anim" /> : <Shuffle size={12} />} Değiştir
               </button>
             </div>
             <div
@@ -567,7 +670,8 @@ export default function OrtakFutbolcuOyunu() {
           </div>
           <button
             onClick={startRound}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90"
+            disabled={!!shuffling}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase tracking-wide transition hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: FLOOD, color: PITCH }}
           >
             Turu Başlat <ChevronRight size={18} />
@@ -575,7 +679,6 @@ export default function OrtakFutbolcuOyunu() {
         </div>
       )}
 
-      {/* TIMER */}
       {phase === "timer" && (
         <div className="w-full max-w-md flex flex-col items-center">
           <div className="flex justify-center mb-6">
@@ -638,7 +741,6 @@ export default function OrtakFutbolcuOyunu() {
         </div>
       )}
 
-      {/* REVEAL */}
       {phase === "reveal" && (
         <div className="w-full max-w-md flex flex-col items-center">
           <div className="w-full rounded-xl p-6 mb-5 text-center" style={{ backgroundColor: PITCH_LIGHT, border: "1px solid rgba(245,197,24,0.2)" }}>
@@ -685,8 +787,7 @@ export default function OrtakFutbolcuOyunu() {
         </div>
       )}
 
-      {/* HISTORY */}
-      {history.length > 0 && phase !== "setup" && (
+      {history.length > 0 && phase !== "setup" && phase !== "loading" && (
         <div className="w-full max-w-md mt-10">
           <div className="flex items-center gap-2 mb-3">
             <Trophy size={14} style={{ color: FLOOD }} />
